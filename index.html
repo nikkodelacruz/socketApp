@@ -4,8 +4,10 @@
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<title>Socket App</title>
-	<link rel="stylesheet" href="style.css">
+	<!-- <link rel="stylesheet" href="style.css"> -->
+	<link rel="stylesheet" href="assets/style.css">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.4.0/css/bootstrap.min.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css">
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.0/jquery.min.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
 
@@ -14,15 +16,129 @@
 
 	<h1>Chat App</h1>
 
-	<div id="app">
-		<form @submit.prevent="sendMessage">
-			<input type="text" v-model="message">
-			<input type="submit" value="Send">
-		</form>
+	<div class="container-fluid">
+		<div id="chatbox">
+			<div id="create-user" v-if="!created">
+				<form @submit.prevent="createUser">
+					<input type="text" class="form-control" v-model="user" placeholder="Please enter your name">
+					<input type="submit" class="btn btn-primary w-100 mt-3" value="Create">
+				</form>
+			</div>
+			<div id="sidepanel">
+				<div id="profile">
+					<div class="wrap">
+						<img id="profile-img" src="http://emilcarlsson.se/assets/mikeross.png" class="online" alt="" />
+						<p>Mike Ross</p>
+						<i class="fa fa-chevron-down expand-button" aria-hidden="true"></i>
+						<div id="status-options">
+							<ul>
+								<li id="status-online" class="active"><span class="status-circle"></span> <p>Online</p></li>
+								<li id="status-away"><span class="status-circle"></span> <p>Away</p></li>
+								<li id="status-busy"><span class="status-circle"></span> <p>Busy</p></li>
+								<li id="status-offline"><span class="status-circle"></span> <p>Offline</p></li>
+							</ul>
+						</div>
+						<div id="expanded">
+							<label for="twitter"><i class="fa fa-facebook fa-fw" aria-hidden="true"></i></label>
+							<input name="twitter" type="text" value="mikeross" />
+							<label for="twitter"><i class="fa fa-twitter fa-fw" aria-hidden="true"></i></label>
+							<input name="twitter" type="text" value="ross81" />
+							<label for="twitter"><i class="fa fa-instagram fa-fw" aria-hidden="true"></i></label>
+							<input name="twitter" type="text" value="mike.ross" />
+						</div>
+					</div>
+				</div>
+				<div id="search">
+					<label for=""><i class="fa fa-search" aria-hidden="true"></i></label>
+					<input type="text" placeholder="Search contacts..." />
+				</div>
+				<div id="contacts">
+					<ul>
+						<li class="contact">
+							<div class="wrap">
+								<span class="contact-status online"></span>
+								<img src="http://emilcarlsson.se/assets/louislitt.png" alt="" />
+								<div class="meta">
+									<p class="name">Louis Litt</p>
+									<p class="preview">You just got LITT up, Mike.</p>
+								</div>
+							</div>
+						</li>
+						<li class="contact active">
+							<div class="wrap">
+								<span class="contact-status busy"></span>
+								<img src="http://emilcarlsson.se/assets/harveyspecter.png" alt="" />
+								<div class="meta">
+									<p class="name">Harvey Specter</p>
+									<p class="preview">Wrong. You take the gun, or you pull out a bigger one. Or, you call their bluff. Or, you do any one of a hundred and forty six other things.</p>
+								</div>
+							</div>
+						</li>
+						<li class="contact">
+							<div class="wrap">
+								<span class="contact-status away"></span>
+								<img src="http://emilcarlsson.se/assets/rachelzane.png" alt="" />
+								<div class="meta">
+									<p class="name">Rachel Zane</p>
+									<p class="preview">I was thinking that we could have chicken tonight, sounds good?</p>
+								</div>
+							</div>
+						</li>
+						<li class="contact">
+							<div class="wrap">
+								<span class="contact-status"></span>
+								<img src="http://emilcarlsson.se/assets/haroldgunderson.png" alt="" />
+								<div class="meta">
+									<p class="name">Harold Gunderson</p>
+									<p class="preview">Thanks Mike! :)</p>
+								</div>
+							</div>
+						</li>
+					</ul>
+				</div>
+				<div id="bottom-bar">
+					<button id="addcontact"><i class="fa fa-user-plus fa-fw" aria-hidden="true"></i> <span>Add contact</span></button>
+					<button id="settings"><i class="fa fa-cog fa-fw" aria-hidden="true"></i> <span>Settings</span></button>
+				</div>
+			</div>
+			<div class="content">
+				<div class="contact-profile">
+					<img src="http://emilcarlsson.se/assets/harveyspecter.png" alt="" />
+					<p>Harvey Specter</p>
+				</div>
+				<div class="messages">
+					<ul>
+						<li v-for="message in messages" :class="[ user == message.user ? 'sent' : 'replies' ]">
+							<div class="text-center" v-if="message.joined">{{message.message}}</div>
+							<div v-else-if="!message.joined">
+								<img src="http://emilcarlsson.se/assets/mikeross.png" alt="" />
+								<p>{{message.message}}</p>
+							</div>
+						</li>
+						<!-- <li class="replies">
+							<img src="http://emilcarlsson.se/assets/harveyspecter.png" alt="" />
+							<p>When you're backed against the wall, break the god damn thing down.</p>
+						</li> -->
+					</ul>
+				</div>
+				<div class="message-input">
+					<form class="wrap" @submit.prevent="sendMessage">
+						<input type="text" v-model="message" placeholder="Write your message..." />
+						<i class="fa fa-paperclip attachment" aria-hidden="true"></i>
+						<button class="submit"><i class="fa fa-paper-plane" aria-hidden="true"></i></button>
+					</form>
+				</div>
+			</div>
+		</div>
 	</div>
 
-	<script src="/socket.io/socket.io.js"></script>
-	<script src="script.js"></script>
+	<!-- <script src="/socket.io/socket.io.js"></script> -->
+	<!-- Prod -->
+	<!-- <script src="https://app.herokuapp.com/socket.io/socket.io.js"></script> -->
+	<!-- Dev -->
+	<script src="http://localhost:3000/socket.io/socket.io.js"></script>
+	<!-- <script src="script.js"></script> -->
+	<script src="assets/script.js"></script>
 	
 </body>
 </html>
